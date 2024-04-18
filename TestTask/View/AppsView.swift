@@ -10,6 +10,16 @@ import RealmSwift
 
 struct AppsView: View {
     
+    @Binding private var selectedTab: Int
+    
+    public init(selectedTab: Binding<Int>, selectedElement: Binding<Element>) {
+        self._selectedTab = selectedTab
+        self._selectedElement = selectedElement
+    }
+    
+    @Binding private var selectedElement: Element
+    
+    
     @State private var isDetailViewActive = false
     
     private var dropboxManager = DropboxManager()
@@ -20,7 +30,7 @@ struct AppsView: View {
     @State private var accessToken = ""
     @State private var elements = [Element(Name: "", Title: "", imageName: "", description: "")]
     
-    @State private var selectedElement = Element(Name: "", Title: "", imageName: "", description: "")
+//    @State private var selectedElement = Element(Name: "", Title: "", imageName: "", description: "")
     
     var results: [String] {
         if searchText.isEmpty {
@@ -38,27 +48,61 @@ struct AppsView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack {
                 
-                if results.isEmpty {
-                    Text("No results found")
-                        .foregroundColor(.gray)
-                }
+                LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
                 
-                if isLoaded {
+                VStack {
+                    Text("Apps")
+                        .font(.system(size: 25))
+                        .padding()
+                    
+                    HStack(alignment: .top) {
+                      Image(systemName: "magnifyingglass")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        TextField("Search", text: $searchText)
+                    }
+                    .foregroundColor(.blackWhite)
+                    .padding(.vertical, 10)
+                    .padding(.horizontal)
+                    .overlay(
+                      RoundedRectangle(cornerRadius: 7)
+                        .stroke(.blackWhite, lineWidth: 1)
+                    )
+                    .background(.whiteBlack)
+                    .cornerRadius(7)
+                    .padding(.horizontal, 20)
+                    
                     Spacer()
                     
-                    categoriesList()
-                } else {
-                    ProgressView("Loading...")
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .padding()
+                    if results.isEmpty {
+                        Text("No results found")
+                            .foregroundColor(.gray)
+                            .padding()
+                    }
+                    
+                    if isLoaded {
+                        
+                        categoriesList()
+                        
+                    } else {
+                        ProgressView("Loading...")
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .padding()
+                        
+                        Spacer()
+                    }
                 }
+                
+                
             }
-            .navigationTitle("Apps")
-            .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
+            
+            selectedTab = 0
+            
+            UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).backgroundColor = .whiteBlack
             
             isLoaded = false
             
@@ -73,49 +117,45 @@ struct AppsView: View {
                   message: Text("Please check your internet connection. You will get not updated data if you login earlier."),
                   dismissButton: .default(Text("OK")))
         }
-        .tag(1)
-        .searchable(text: $searchText)
     }
     
     func categoriesList() -> some View {
-        List {
-            ForEach(results.indices, id: \.self) { rowIndex in
-                HStack {
-                    ForEach(0..<2) { columnIndex in
-                        let index = rowIndex * 2 + columnIndex
-                        if index < self.results.count {
-                            categoryButton(index: index)
-                        } else {
-                            Spacer()
-                                .frame(maxWidth: .infinity)
-                        }
-                    }
+        ScrollView {
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                ForEach(0..<results.count, id: \.self) { index in
+                    categoryButton(index: index)
                 }
-                .listRowSeparator(.hidden)
             }
+            .padding()
         }
     }
     
     func categoryButton(index: Int) -> some View {
+        
+        
         Button(action: {
-            isDetailViewActive = true
             selectedElement = elements[index]
+            selectedTab = 4
+            isDetailViewActive = true
         }) {
             ZStack {
                 Rectangle()
-                    .foregroundColor(Color.black)
-                    .frame(width: 150, height: 50)
-                    .cornerRadius(10)
+                    .foregroundColor(.customGray)
+                    .frame(width: 170, height: 50)
+                    .cornerRadius(7)
                 
                 Text(self.results[index])
-                    .foregroundColor(Color.white)
+                    .foregroundColor(.white)
                     .font(.system(size: 15))
                     .fontWeight(.bold)
             }
         }
         .buttonStyle(PlainButtonStyle())
-        .background(
-            NavigationLink("", destination: DetailView(selectedElement), isActive: $isDetailViewActive).hidden())
+        .overlay(
+            RoundedRectangle(cornerRadius: 7)
+                .stroke(Color.white, lineWidth: 0.7)
+                .shadow(color: Color.black, radius: 5, x: 0, y: 2)
+        )
     }
     
     

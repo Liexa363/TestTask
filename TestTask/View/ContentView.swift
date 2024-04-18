@@ -6,62 +6,50 @@
 //
 
 import SwiftUI
-import SwiftyDropbox
 
 struct ContentView: View {
     
     @State private var selectedTab: Int = 0
+    @State private var selectedElement: Element = Element(Name: "", Title: "", imageName: "", description: "")
     
-    @State private var isLoaded = true
+    let tabItems = [
+        TabItem(icon: "app.badge.fill", title: "Apps"),
+        TabItem(icon: "sparkles.tv", title: "Games"),
+        TabItem(icon: "heart.fill", title: "Favorites"),
+        TabItem(icon: "align.vertical.top.fill", title: "Topics")
+    ]
     
     var body: some View {
         
-        TabView(selection: $selectedTab) {
+        VStack {
             
-            if isLoaded {
+            switch selectedTab {
+            case 0:
+                AppsView(selectedTab: $selectedTab, selectedElement: $selectedElement)
+            case 1:
+                GamesView(selectedTab: $selectedTab)
+            case 2:
+                FavoritesView(selectedTab: $selectedTab)
+            case 3:
+                TopicsView(selectedTab: $selectedTab)
+            case 4:
+                DetailView(selectedElement, selectedTab: $selectedTab)
+            default:
+                EmptyView()
+            }
+            
+            if selectedTab != 4 {
+                Spacer()
                 
-                NavigationView {
-                    AppsView()
-                }
-                .tabItem {
-                    Image(systemName: "a.square")
-                    Text("Apps")
-                }
-                
-                NavigationView {
-                    GamesView()
-                }
-                .tabItem {
-                    Image(systemName: "g.square")
-                    Text("Games")
-                }
-                
-                NavigationView {
-                    FavoritesView()
-                }
-                .tabItem {
-                    Image(systemName: "f.square")
-                    Text("Favorites")
-                }
-                
-                NavigationView {
-                    TopicsView()
-                }
-                .tabItem {
-                    Image(systemName: "t.square")
-                    Text("Topics")
-                }
-                
-            } else {
-                ProgressView("Loading...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .padding()
+                CustomTabBar(selectedTab: $selectedTab, tabItems: tabItems)
             }
             
         }
+        
     }
-    
 }
+
+
 
 #Preview {
     ContentView()

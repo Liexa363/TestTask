@@ -9,15 +9,27 @@ import SwiftUI
 
 struct GamesView: View {
     
+    @Binding private var selectedTab: Int
+    
+    public init(selectedTab: Binding<Int>) {
+        self._selectedTab = selectedTab
+    }
+    
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack {
                 
+                LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+                
+                VStack {
+                    Text("Games")
+                        .font(.system(size: 25))
+                        .padding()
+                    
+                    Spacer()
+                    
+                }
             }
-            .navigationBarTitle("Games")
-            .navigationBarTitleDisplayMode(.inline)
         }
-        .tag(2)
     }
 }
-

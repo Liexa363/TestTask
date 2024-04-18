@@ -9,15 +9,28 @@ import SwiftUI
 
 struct FavoritesView: View {
     
+    @Binding private var selectedTab: Int
+    
+    public init(selectedTab: Binding<Int>) {
+        self._selectedTab = selectedTab
+    }
+    
     var body: some View {
         NavigationView {
-            VStack {
+            ZStack {
                 
+                LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+                
+                VStack {
+                    Text("Favorites")
+                        .font(.system(size: 25))
+                        .padding()
+                    
+                    Spacer()
+                    
+                }
             }
-            .navigationTitle("Favorites")
-            .navigationBarTitleDisplayMode(.inline)
         }
-        .tag(3)
     }
 }
 

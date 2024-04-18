@@ -9,8 +9,11 @@ import SwiftUI
 
 struct DetailView: View {
     
-    init(_ selectedElement: Element) {
+    @Binding private var selectedTab: Int
+    
+    init(_ selectedElement: Element, selectedTab: Binding<Int>) {
         self.selectedElement = selectedElement
+        self._selectedTab = selectedTab
     }
     
     let selectedElement: Element
@@ -38,38 +41,72 @@ struct DetailView: View {
         
         NavigationView {
             
-            if isLoaded {
-                SquareView()
-                    .padding()
-                    .foregroundColor(Color.gray)
-            } else {
-                ProgressView("Loading...")
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .padding()
+            ZStack {
+                
+                LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+                
+                VStack {
+                    
+                    HStack {
+                        Button(action: {
+                            selectedTab = 0
+                        }) {
+                            ZStack {
+                                Rectangle()
+                                    .frame(width: 40, height: 40)
+                                    .foregroundColor(.customGray)
+                                    .cornerRadius(7)
+                                Image(systemName: "chevron.left")
+                                    .foregroundColor(.white)
+                            }
+                        }
+                        
+                        Spacer()
+                        
+                        Text(selectedElement.Name)
+                            .fontWeight(.bold)
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            // download button
+                        }) {
+                            ZStack {
+                                Rectangle()
+                                    .frame(width: 40, height: 40)
+                                    .foregroundColor(.customGray)
+                                    .cornerRadius(7)
+                                Image(systemName: "square.and.arrow.down.fill")
+                                    .foregroundColor(.white)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top)
+                    
+                    Spacer()
+                    
+                    if isLoaded {
+                        SquareView()
+                            .padding(.horizontal, 20)
+                            .padding(.top, 20)
+                            .padding(.bottom, 80)
+                            .foregroundColor(.customGreen)
+                    } else {
+                        ProgressView("Loading...")
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .padding()
+                    }
+                    
+                    Spacer()
+                }
             }
             
             
         }
-        .navigationBarTitle(selectedElement.Name)
-        .navigationBarBackButtonHidden(true)
-        .navigationBarItems(leading: Button(action: {
-            presentationMode.wrappedValue.dismiss()
-        }) {
-            Image(systemName: "chevron.backward.square")
-                .foregroundColor(.black)
-        })
-        .navigationBarItems(trailing: Button(action: {
-            
-            // Action for the custom navigation bar item
-            
-        }) {
-            Image(systemName: "arrow.down.square")
-                .foregroundColor(.black)
-        })
-        .padding(.horizontal, 20)
-        .padding(.top, 50)
-        .padding(.bottom, 50)
         .onAppear {
+            
+            UITabBar.appearance().isHidden = true
             
             isContentAppeared = false
             isLoading = true
@@ -88,7 +125,7 @@ struct DetailView: View {
             }
             .onEnded { value in
                 if value.translation.width > 100 {
-                    presentationMode.wrappedValue.dismiss()
+                    selectedTab = 0
                 }
                 offset = .zero
             }
@@ -121,8 +158,7 @@ struct DetailView: View {
                             image
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .foregroundColor(.white)
-                                .padding()
+                                .cornerRadius(7)
                         }
                     }
                 }
@@ -134,21 +170,22 @@ struct DetailView: View {
                 
                 HStack {
                     Text(selectedElement.Title)
-                        .font(.title)
-                        .foregroundColor(.white)
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(.customGray)
                     
                     Spacer()
                 }
-                .padding()
+                .padding(.vertical, 5)
                 
                 HStack {
                     Text(selectedElement.description)
                         .font(.headline)
-                        .foregroundColor(.white)
+                        .foregroundColor(.customGray)
+                        .minimumScaleFactor(0.5)
                     
                     Spacer()
                 }
-                .padding()
                 
                 Spacer()
                 
@@ -162,16 +199,15 @@ struct DetailView: View {
                             .foregroundColor(.white)
                         
                         Image(systemName: "heart")
-                            .foregroundColor(.white)
+                            .foregroundColor(.customRed)
                     }
-                    .padding()
                 }
                 .frame(minWidth: 100, maxWidth: .infinity, minHeight: 44)
-                .background(.black)
+                .background(.customGray)
                 .cornerRadius(10)
-                .padding()
                 
             }
+            .padding(.all, 10)
             .onAppear {
                 
                 isContentAppeared = false

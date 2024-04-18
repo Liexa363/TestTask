@@ -14,6 +14,7 @@
 		FA9BEAC32BC68F6A00360ACA /* TopicsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9BEAC22BC68F6A00360ACA /* TopicsView.swift */; };
 		FA9BEAC72BC6EB6800360ACA /* RealmElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9BEAC62BC6EB6800360ACA /* RealmElement.swift */; };
 		FA9BEAC92BC6F49000360ACA /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9BEAC82BC6F49000360ACA /* DetailView.swift */; };
+		FAA456842BD0F6A300AB4000 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA456832BD0F6A300AB4000 /* CustomTabBar.swift */; };
 		FABB410C2BC41CC1000A68CE /* TestTaskApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB410B2BC41CC1000A68CE /* TestTaskApp.swift */; };
 		FABB410E2BC41CC1000A68CE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABB410D2BC41CC1000A68CE /* ContentView.swift */; };
 		FABB41102BC41CC4000A68CE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FABB410F2BC41CC4000A68CE /* Assets.xcassets */; };
@@ -38,9 +39,10 @@
 		FA9BEAC22BC68F6A00360ACA /* TopicsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicsView.swift; sourceTree = "<group>"; };
 		FA9BEAC62BC6EB6800360ACA /* RealmElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmElement.swift; sourceTree = "<group>"; };
 		FA9BEAC82BC6F49000360ACA /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		FAA456832BD0F6A300AB4000 /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		FABB41082BC41CC1000A68CE /* TestTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FABB410B2BC41CC1000A68CE /* TestTaskApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestTaskApp.swift; sourceTree = "<group>"; };
-		FABB410D2BC41CC1000A68CE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FABB410D2BC41CC1000A68CE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ContentView.swift; path = TestTask/View/ContentView.swift; sourceTree = SOURCE_ROOT; };
 		FABB410F2BC41CC4000A68CE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FABB41122BC41CC4000A68CE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		FABB41192BC43759000A68CE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -67,13 +69,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D4656B512807C91243DD40A0 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		FA9BEACA2BC738CE00360ACA /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -103,6 +98,7 @@
 				FA9BEAC02BC68EF200360ACA /* FavoritesView.swift */,
 				FA9BEAC22BC68F6A00360ACA /* TopicsView.swift */,
 				FA9BEAC82BC6F49000360ACA /* DetailView.swift */,
+				FAA456832BD0F6A300AB4000 /* CustomTabBar.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -113,7 +109,6 @@
 				FABB41192BC43759000A68CE /* Info.plist */,
 				FABB410A2BC41CC1000A68CE /* TestTask */,
 				FABB41092BC41CC1000A68CE /* Products */,
-				D4656B512807C91243DD40A0 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -232,6 +227,7 @@
 				FA9BEAB92BC683A700360ACA /* NetworkManager.swift in Sources */,
 				FAC023622BC543F0002E51BB /* AppDelegate.swift in Sources */,
 				FAC0236A2BC60AC2002E51BB /* MyImage.swift in Sources */,
+				FAA456842BD0F6A300AB4000 /* CustomTabBar.swift in Sources */,
 				FA9BEAC72BC6EB6800360ACA /* RealmElement.swift in Sources */,
 				FAC023642BC5DB8F002E51BB /* Token.swift in Sources */,
 				FABB410E2BC41CC1000A68CE /* ContentView.swift in Sources */,
