@@ -22,13 +22,9 @@ struct DetailView: View {
     
     @State private var isLoaded = false
     
-    @State private var isShowingAlert = false
     @State private var isErrorDownloadingImage = false
     
     private var dropboxManager = DropboxManager()
-    private var networkManager = NetworkManager()
-    
-    @State private var accessToken = ""
     
     @State private var image: MyImage?
     @State var downloadedImage: Image?
@@ -106,7 +102,7 @@ struct DetailView: View {
             isLoaded = false
             
             DispatchQueue.main.async {
-                checkInternetConnectionAndDownloadData()
+                receiveImage()
             }
             
             
@@ -158,11 +154,6 @@ struct DetailView: View {
                                 .aspectRatio(contentMode: .fit)
                         }
                     }
-                }
-                .alert(isPresented: $isShowingAlert) {
-                    Alert(title: Text("No Internet Connection"),
-                          message: Text("Please check your internet connection. A photo will not be uploaded"),
-                          dismissButton: .default(Text("OK")))
                 }
                 .alert(isPresented: $isErrorDownloadingImage) {
                     Alert(title: Text("Error downloading image"),
@@ -223,8 +214,6 @@ struct DetailView: View {
                         downloadedImage = nil
                         isLoading = false
                         print("Error downloading image")
-                        
-                        self.isErrorDownloadingImage = true
                     }
                     
                     
@@ -235,41 +224,27 @@ struct DetailView: View {
         
     }
     
-    func receiveAccessToken() {
-        if let receivedAccessToken = dropboxManager.getAccessToken(refreshToken: K.Dropbox.refreshToken, clientID: K.Dropbox.appKey, clientSecret: K.Dropbox.appSecret) {
-            accessToken = receivedAccessToken
-        } else {
-            print("Failed to retrieve access token")
-        }
-    }
-    
-    func receiveImage(path: String) {
+    func receiveImage() {
         
-        let prePath = "/"
+        let fileName = selectedElement.imageName
         
-        if let receivedImages = dropboxManager.getImage(path: prePath + path, accessToken: accessToken) {
-            image = receivedImages.first!
+        if let loadedImage = UIImage(contentsOfFile: self.getDocumentsDirectory().appendingPathComponent(fileName).path) {
+            image = MyImage(image: loadedImage)
+            
+            isLoaded = true
         } else {
             image = nil
             print("Failed to get image")
+            
+            isLoaded = true
+            
+            self.isErrorDownloadingImage = true
         }
     }
     
-    func checkInternetConnectionAndDownloadData() {
-        networkManager.isInternetConnection { isConnected in
-            if isConnected {
-                
-                receiveAccessToken()
-                receiveImage(path: selectedElement.imageName)
-                
-                isLoaded = true
-                
-            } else {
-                
-                isLoaded = true
-                self.isShowingAlert = true
-            }
-        }
+    private func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
     
 }

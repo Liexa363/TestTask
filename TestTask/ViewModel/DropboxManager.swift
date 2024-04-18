@@ -160,9 +160,10 @@ struct DropboxManager {
         task.resume()
     }
     
-    func getImage(path: String, accessToken: String) -> [MyImage]? {
+    func getImage(path: String, accessToken: String) {
         let semaphore = DispatchSemaphore(value: 0)
-        var returnImages: [MyImage]?
+        
+        let fileName = String(path.dropFirst())
         
         let url = URL(string: "https://content.dropboxapi.com/2/files/download")!
         var request = URLRequest(url: url)
@@ -182,8 +183,13 @@ struct DropboxManager {
             }
             
             if httpResponse.statusCode == 200 {
-                if let data = data, let image = UIImage(data: data) {
-                    returnImages = [MyImage(image: image)]
+                if let data = data {
+                    do {
+                        try data.write(to: self.getDocumentsDirectory().appendingPathComponent(fileName))
+                        print("Image saved to: ",self.getDocumentsDirectory())
+                    } catch {
+                        print(error)
+                    }
                 } else {
                     print("InvalidDataError")
                 }
@@ -193,7 +199,6 @@ struct DropboxManager {
                    let errorSummary = json["error_summary"] as? String,
                    errorSummary == "path/not_found/" {
                     print("File not found")
-                    returnImages = nil
                 } else {
                     print("HTTPError: \(httpResponse.statusCode)")
                 }
@@ -203,7 +208,11 @@ struct DropboxManager {
         task.resume()
         _ = semaphore.wait(timeout: .distantFuture)
         
-        return returnImages
+    }
+    
+    private func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
     }
 
 

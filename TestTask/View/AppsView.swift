@@ -44,6 +44,8 @@ struct AppsView: View {
     
     @State private var isShowingAlert = false
     
+    @State private var isRealmFileExists = false
+    
     var body: some View {
         ZStack {
             
@@ -71,8 +73,6 @@ struct AppsView: View {
                 .cornerRadius(7)
                 .padding(.horizontal, 20)
                 
-                Spacer()
-                
                 if results.isEmpty {
                     Text("No results found")
                         .foregroundColor(.gray)
@@ -81,7 +81,22 @@ struct AppsView: View {
                 
                 if isLoaded {
                     
-                    categoriesList()
+                    if isRealmFileExists {
+                        
+                        Spacer()
+                        
+                        categoriesList()
+                        
+                        Spacer()
+                        
+                    } else {
+                        
+                        Text("No data downloaded")
+                            .foregroundColor(.gray)
+                            .padding()
+                        
+                        Spacer()
+                    }
                     
                 } else {
                     ProgressView("Loading...")
@@ -96,19 +111,21 @@ struct AppsView: View {
         }
         .onAppear {
             
+            isRealmFileExists = checkRealmFileExistence()
+            
             selectedTab = 0
             
             isLoaded = false
             
             DispatchQueue.main.async {
-                checkInternetConnectionAndDownloadData()
+                uploadData()
             }
             
             
         }
         .alert(isPresented: $isShowingAlert) {
             Alert(title: Text("No Internet Connection"),
-                  message: Text("Please check your internet connection. You will get not updated data if you login earlier."),
+                  message: Text("Please check your internet connection. You cannot download data."),
                   dismissButton: .default(Text("OK")))
         }
     }
@@ -161,9 +178,18 @@ struct AppsView: View {
         }
     }
     
-    func receiveElements() {
+    func receiveData() {
         if let receivedElements = dropboxManager.getFile(path: K.Paths.dataJSONPath, accessToken: accessToken) {
+            
             elements = receivedElements
+            
+            let prePath = "/"
+            
+            for element in elements {
+                let path = element.imageName
+                
+                dropboxManager.getImage(path: prePath + path, accessToken: accessToken)
+            }
         } else {
             print("Failed to get file")
         }
@@ -215,25 +241,45 @@ struct AppsView: View {
         }
     }
     
-    func checkInternetConnectionAndDownloadData() {
-        networkManager.isInternetConnection { isConnected in
-            if isConnected {
-                
-                receiveAccessToken()
-                receiveElements()
-                
-                saveElementsToRealm(elements)
-                
-                isLoaded = true
-                
-            } else {
-                
-                getElementsFromRealm()
-                
-                isLoaded = true
-                self.isShowingAlert = true
+    func uploadData() {
+        
+        if isRealmFileExists {
+            
+            getElementsFromRealm()
+            
+            isLoaded = true
+            
+        } else {
+            
+            networkManager.isInternetConnection { isConnected in
+                if isConnected {
+                    
+                    receiveAccessToken()
+                    receiveData()
+                    
+                    saveElementsToRealm(elements)
+                    
+                    isRealmFileExists = true
+                    
+                    isLoaded = true
+                    
+                } else {
+                    
+                    isLoaded = true
+                    self.isShowingAlert = true
+                }
             }
         }
+        
+        
+    }
+    
+    private func checkRealmFileExistence() -> Bool {
+        let realm = try! Realm()
+        
+        let fileObjects = realm.objects(RealmElement.self)
+        
+        return !fileObjects.isEmpty
     }
     
 }
