@@ -30,8 +30,6 @@ struct AppsView: View {
     @State private var accessToken = ""
     @State private var elements = [Element(Name: "", Title: "", imageName: "", description: "")]
     
-//    @State private var selectedElement = Element(Name: "", Title: "", imageName: "", description: "")
-    
     var results: [String] {
         if searchText.isEmpty {
             return elements.map { $0.Name }
@@ -47,62 +45,58 @@ struct AppsView: View {
     @State private var isShowingAlert = false
     
     var body: some View {
-        NavigationView {
-            ZStack {
+        ZStack {
+            
+            LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            
+            VStack {
+                Text("Apps")
+                    .font(.system(size: 25))
+                    .padding()
                 
-                LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+                HStack(alignment: .top) {
+                  Image(systemName: "magnifyingglass")
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                    TextField("Search", text: $searchText)
+                }
+                .foregroundColor(.blackWhite)
+                .padding(.vertical, 10)
+                .padding(.horizontal)
+                .overlay(
+                  RoundedRectangle(cornerRadius: 7)
+                    .stroke(.blackWhite, lineWidth: 1)
+                )
+                .background(.whiteBlack)
+                .cornerRadius(7)
+                .padding(.horizontal, 20)
                 
-                VStack {
-                    Text("Apps")
-                        .font(.system(size: 25))
+                Spacer()
+                
+                if results.isEmpty {
+                    Text("No results found")
+                        .foregroundColor(.gray)
                         .padding()
-                    
-                    HStack(alignment: .top) {
-                      Image(systemName: "magnifyingglass")
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        TextField("Search", text: $searchText)
-                    }
-                    .foregroundColor(.blackWhite)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal)
-                    .overlay(
-                      RoundedRectangle(cornerRadius: 7)
-                        .stroke(.blackWhite, lineWidth: 1)
-                    )
-                    .background(.whiteBlack)
-                    .cornerRadius(7)
-                    .padding(.horizontal, 20)
-                    
-                    Spacer()
-                    
-                    if results.isEmpty {
-                        Text("No results found")
-                            .foregroundColor(.gray)
-                            .padding()
-                    }
-                    
-                    if isLoaded {
-                        
-                        categoriesList()
-                        
-                    } else {
-                        ProgressView("Loading...")
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .padding()
-                        
-                        Spacer()
-                    }
                 }
                 
-                
+                if isLoaded {
+                    
+                    categoriesList()
+                    
+                } else {
+                    ProgressView("Loading...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                    
+                    Spacer()
+                }
             }
+            
+            
         }
         .onAppear {
             
             selectedTab = 0
-            
-            UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).backgroundColor = .whiteBlack
             
             isLoaded = false
             

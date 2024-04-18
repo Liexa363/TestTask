@@ -39,70 +39,65 @@ struct DetailView: View {
     
     var body: some View {
         
-        NavigationView {
+        ZStack {
             
-            ZStack {
+            LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            
+            VStack {
                 
-                LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
-                
-                VStack {
-                    
-                    HStack {
-                        Button(action: {
-                            selectedTab = 0
-                        }) {
-                            ZStack {
-                                Rectangle()
-                                    .frame(width: 40, height: 40)
-                                    .foregroundColor(.customGray)
-                                    .cornerRadius(7)
-                                Image(systemName: "chevron.left")
-                                    .foregroundColor(.white)
-                            }
-                        }
-                        
-                        Spacer()
-                        
-                        Text(selectedElement.Name)
-                            .fontWeight(.bold)
-                        
-                        Spacer()
-                        
-                        Button(action: {
-                            // download button
-                        }) {
-                            ZStack {
-                                Rectangle()
-                                    .frame(width: 40, height: 40)
-                                    .foregroundColor(.customGray)
-                                    .cornerRadius(7)
-                                Image(systemName: "square.and.arrow.down.fill")
-                                    .foregroundColor(.white)
-                            }
+                HStack {
+                    Button(action: {
+                        selectedTab = 0
+                    }) {
+                        ZStack {
+                            Rectangle()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.customGray)
+                                .cornerRadius(7)
+                            Image(systemName: "chevron.left")
+                                .foregroundColor(.white)
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top)
                     
                     Spacer()
                     
-                    if isLoaded {
-                        SquareView()
-                            .padding(.horizontal, 20)
-                            .padding(.top, 20)
-                            .padding(.bottom, 80)
-                            .foregroundColor(.customGreen)
-                    } else {
-                        ProgressView("Loading...")
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .padding()
-                    }
+                    Text(selectedElement.Name)
+                        .fontWeight(.bold)
                     
                     Spacer()
+                    
+                    Button(action: {
+                        // download button
+                    }) {
+                        ZStack {
+                            Rectangle()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.customGray)
+                                .cornerRadius(7)
+                            Image(systemName: "square.and.arrow.down.fill")
+                                .foregroundColor(.white)
+                        }
+                    }
                 }
+                .padding(.horizontal, 20)
+                .padding(.top)
+                
+                Spacer()
+                
+                if isLoaded {
+                    SquareView()
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                        .padding(.bottom, 80)
+                        .foregroundColor(.customGreen)
+                } else {
+                    ProgressView("Loading...")
+                        .progressViewStyle(CircularProgressViewStyle())
+                        .padding()
+                }
+                
+                Spacer()
             }
-            
-            
         }
         .onAppear {
             

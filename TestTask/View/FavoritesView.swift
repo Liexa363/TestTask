@@ -16,19 +16,17 @@ struct FavoritesView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
+        ZStack {
+            
+            LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+            
+            VStack {
+                Text("Favorites")
+                    .font(.system(size: 25))
+                    .padding()
                 
-                LinearGradient(colors: [.customLightGreen, .customDarkGreen], startPoint: .top, endPoint: .bottom).ignoresSafeArea()
+                Spacer()
                 
-                VStack {
-                    Text("Favorites")
-                        .font(.system(size: 25))
-                        .padding()
-                    
-                    Spacer()
-                    
-                }
             }
         }
     }
