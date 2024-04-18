@@ -18,24 +18,22 @@ struct DetailView: View {
     
     let selectedElement: Element
     
-    @Environment(\.presentationMode) var presentationMode
-    
     @State private var offset = CGSize.zero
     
     @State private var isLoaded = false
     
     @State private var isShowingAlert = false
+    @State private var isErrorDownloadingImage = false
     
     private var dropboxManager = DropboxManager()
     private var networkManager = NetworkManager()
     
     @State private var accessToken = ""
-    @State private var image: MyImage?
     
+    @State private var image: MyImage?
     @State var downloadedImage: Image?
     
     @State private var isLoading = false
-    @State private var isContentAppeared = false
     
     var body: some View {
         
@@ -103,7 +101,6 @@ struct DetailView: View {
             
             UITabBar.appearance().isHidden = true
             
-            isContentAppeared = false
             isLoading = true
             
             isLoaded = false
@@ -154,12 +151,22 @@ struct DetailView: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .cornerRadius(7)
+                        } else {
+                            Image(systemName: "photo")
+                                .resizable()
+                                .foregroundColor(.gray)
+                                .aspectRatio(contentMode: .fit)
                         }
                     }
                 }
                 .alert(isPresented: $isShowingAlert) {
                     Alert(title: Text("No Internet Connection"),
                           message: Text("Please check your internet connection. A photo will not be uploaded"),
+                          dismissButton: .default(Text("OK")))
+                }
+                .alert(isPresented: $isErrorDownloadingImage) {
+                    Alert(title: Text("Error downloading image"),
+                          message: Text("Image is not found."),
                           dismissButton: .default(Text("OK")))
                 }
                 
@@ -205,7 +212,6 @@ struct DetailView: View {
             .padding(.all, 10)
             .onAppear {
                 
-                isContentAppeared = false
                 isLoading = true
                 
                 DispatchQueue.main.async {
@@ -214,7 +220,11 @@ struct DetailView: View {
                         downloadedImage = Image(uiImage: image.image)
                         isLoading = false
                     } else {
+                        downloadedImage = nil
+                        isLoading = false
                         print("Error downloading image")
+                        
+                        self.isErrorDownloadingImage = true
                     }
                     
                     
@@ -240,6 +250,7 @@ struct DetailView: View {
         if let receivedImages = dropboxManager.getImage(path: prePath + path, accessToken: accessToken) {
             image = receivedImages.first!
         } else {
+            image = nil
             print("Failed to get image")
         }
     }
@@ -254,8 +265,6 @@ struct DetailView: View {
                 isLoaded = true
                 
             } else {
-                
-                downloadedImage = Image(systemName: "photo")
                 
                 isLoaded = true
                 self.isShowingAlert = true

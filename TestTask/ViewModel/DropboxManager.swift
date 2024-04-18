@@ -160,12 +160,9 @@ struct DropboxManager {
         task.resume()
     }
     
-    
     func getImage(path: String, accessToken: String) -> [MyImage]? {
-        
-        var returnImages: [MyImage]?
-        
         let semaphore = DispatchSemaphore(value: 0)
+        var returnImages: [MyImage]?
         
         let url = URL(string: "https://content.dropboxapi.com/2/files/download")!
         var request = URLRequest(url: url)
@@ -175,35 +172,41 @@ struct DropboxManager {
         request.setValue("{\"path\":\"\(path)\"}", forHTTPHeaderField: "Dropbox-API-Arg")
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            
             defer {
                 semaphore.signal()
             }
             
-            guard let response = response as? HTTPURLResponse else {
-                print(NSError(domain: "UnknownError", code: 0, userInfo: nil))
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("UnknownError")
                 return
             }
             
-            if response.statusCode == 200 {
-                // Convert data to UIImage or NSImage
-                if let data = data, let image = UIImage(data: data) { // Or NSImage for macOS
-                    let images = [MyImage(image: image)] // Assuming you're only dealing with one image
-                    returnImages = images
+            if httpResponse.statusCode == 200 {
+                if let data = data, let image = UIImage(data: data) {
+                    returnImages = [MyImage(image: image)]
                 } else {
-                    print(NSError(domain: "InvalidDataError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid data format"]))
+                    print("InvalidDataError")
                 }
             } else {
-                print(NSError(domain: "HTTPError", code: response.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Status Code: \(response.statusCode)"]))
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let errorSummary = json["error_summary"] as? String,
+                   errorSummary == "path/not_found/" {
+                    print("File not found")
+                    returnImages = nil
+                } else {
+                    print("HTTPError: \(httpResponse.statusCode)")
+                }
             }
         }
         
         task.resume()
-        
         _ = semaphore.wait(timeout: .distantFuture)
         
         return returnImages
     }
+
+
     
     
 }
