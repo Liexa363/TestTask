@@ -6,17 +6,22 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct DetailView: View {
     
     @Binding private var selectedTab: Int
+    @Binding private var previousTab: Int
     
-    init(_ selectedElement: Element, selectedTab: Binding<Int>) {
+    init(_ selectedElement: Element, selectedTab: Binding<Int>, previousTab: Binding<Int>) {
         self.selectedElement = selectedElement
         self._selectedTab = selectedTab
+        self._previousTab = previousTab
     }
     
     let selectedElement: Element
+    
+    @State private var isFavorite = false
     
     @State private var offset = CGSize.zero
     
@@ -41,7 +46,7 @@ struct DetailView: View {
                 
                 HStack {
                     Button(action: {
-                        selectedTab = 0
+                        selectedTab = previousTab
                     }) {
                         ZStack {
                             Rectangle()
@@ -94,6 +99,8 @@ struct DetailView: View {
             }
         }
         .onAppear {
+            
+            isFavorite = selectedElement.favorite
             
             UITabBar.appearance().isHidden = true
             
@@ -184,15 +191,20 @@ struct DetailView: View {
                 
                 Button(action: {
                     
-                    // add to favorites and save it to Realm
+                    addToFavorites()
                     
                 }) {
                     HStack {
                         Text("Favorite")
                             .foregroundColor(.white)
                         
-                        Image(systemName: "heart")
-                            .foregroundColor(.customRed)
+                        if isFavorite {
+                            Image(systemName: "heart.fill")
+                                .foregroundColor(.customRed)
+                        } else {
+                            Image(systemName: "heart")
+                                .foregroundColor(.customRed)
+                        }
                     }
                 }
                 .frame(minWidth: 100, maxWidth: .infinity, minHeight: 44)
@@ -245,6 +257,29 @@ struct DetailView: View {
     private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
+    }
+    
+    func addToFavorites() {
+        
+        do {
+            let realm = try Realm()
+            
+            let id = try ObjectId(string: selectedElement.id)
+            
+            if let objectToUpdate = realm.object(ofType: RealmElement.self, forPrimaryKey: id) {
+                
+                try! realm.write {
+                    objectToUpdate.favorite.toggle()
+                }
+                
+                isFavorite.toggle()
+            } else {
+                print("Error with searching object in Realm")
+            }
+        } catch {
+            print("Error with updating object in Realm")
+        }
+        
     }
     
 }

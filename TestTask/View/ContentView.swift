@@ -10,7 +10,8 @@ import SwiftUI
 struct ContentView: View {
     
     @State private var selectedTab: Int = 0
-    @State private var selectedElement: Element = Element(Name: "", Title: "", imageName: "", description: "")
+    @State private var previousTab: Int = 0
+    @State private var selectedElement: Element = Element(id: "", Name: "", Title: "", imageName: "", description: "", favorite: false)
     
     let tabItems = [
         TabItem(icon: "app.badge.fill", title: "Apps"),
@@ -25,15 +26,15 @@ struct ContentView: View {
             
             switch selectedTab {
             case 0:
-                AppsView(selectedTab: $selectedTab, selectedElement: $selectedElement)
+                AppsView(selectedTab: $selectedTab, previousTab: $previousTab, selectedElement: $selectedElement)
             case 1:
                 GamesView(selectedTab: $selectedTab)
             case 2:
-                FavoritesView(selectedTab: $selectedTab)
+                FavoritesView(selectedTab: $selectedTab, previousTab: $previousTab, selectedElement: $selectedElement)
             case 3:
                 TopicsView(selectedTab: $selectedTab)
             case 4:
-                DetailView(selectedElement, selectedTab: $selectedTab)
+                DetailView(selectedElement, selectedTab: $selectedTab, previousTab: $previousTab)
             default:
                 EmptyView()
             }

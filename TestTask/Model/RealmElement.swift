@@ -8,10 +8,12 @@
 import Foundation
 import RealmSwift
 
-class RealmElement: Object {
+class RealmElement: Object, ObjectKeyIdentifiable {
+    @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var name: String = ""
     @Persisted var title: String = ""
     @Persisted var imageName: String = ""
     @Persisted var elementDescription: String = ""
+    @Persisted var favorite: Bool = false
 }
 

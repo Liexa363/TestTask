@@ -29,6 +29,7 @@
 		FAD439682BCFFCA8005BB899 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = FAD439672BCFFCA8005BB899 /* RealmSwift */; };
 		FAD4396B2BCFFE61005BB899 /* SwiftyDropbox in Frameworks */ = {isa = PBXBuildFile; productRef = FAD4396A2BCFFE61005BB899 /* SwiftyDropbox */; };
 		FAD4396D2BCFFE61005BB899 /* SwiftyDropboxObjC in Frameworks */ = {isa = PBXBuildFile; productRef = FAD4396C2BCFFE61005BB899 /* SwiftyDropboxObjC */; };
+		FAD7BFE12BD264D4003892DB /* TempElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD7BFE02BD264D4003892DB /* TempElement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		FAC023652BC5DC97002E51BB /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		FAC023672BC5E05E002E51BB /* Element.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Element.swift; sourceTree = "<group>"; };
 		FAC023692BC60AC2002E51BB /* MyImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyImage.swift; sourceTree = "<group>"; };
+		FAD7BFE02BD264D4003892DB /* TempElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TempElement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 				FAC023672BC5E05E002E51BB /* Element.swift */,
 				FA9BEAC62BC6EB6800360ACA /* RealmElement.swift */,
 				FAC023692BC60AC2002E51BB /* MyImage.swift */,
+				FAD7BFE02BD264D4003892DB /* TempElement.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -225,6 +228,7 @@
 			files = (
 				FA9BEAC32BC68F6A00360ACA /* TopicsView.swift in Sources */,
 				FA9BEAB92BC683A700360ACA /* NetworkManager.swift in Sources */,
+				FAD7BFE12BD264D4003892DB /* TempElement.swift in Sources */,
 				FAC023622BC543F0002E51BB /* AppDelegate.swift in Sources */,
 				FAC0236A2BC60AC2002E51BB /* MyImage.swift in Sources */,
 				FAA456842BD0F6A300AB4000 /* CustomTabBar.swift in Sources */,

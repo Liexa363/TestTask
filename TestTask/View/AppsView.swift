@@ -11,9 +11,11 @@ import RealmSwift
 struct AppsView: View {
     
     @Binding private var selectedTab: Int
+    @Binding private var previousTab: Int
     
-    public init(selectedTab: Binding<Int>, selectedElement: Binding<Element>) {
+    public init(selectedTab: Binding<Int>, previousTab: Binding<Int>, selectedElement: Binding<Element>) {
         self._selectedTab = selectedTab
+        self._previousTab = previousTab
         self._selectedElement = selectedElement
     }
     
@@ -28,7 +30,7 @@ struct AppsView: View {
     @State private var searchText = ""
     
     @State private var accessToken = ""
-    @State private var elements = [Element(Name: "", Title: "", imageName: "", description: "")]
+    @State private var elements = [Element(id: "", Name: "", Title: "", imageName: "", description: "", favorite: false)]
     
     var results: [String] {
         if searchText.isEmpty {
@@ -114,6 +116,7 @@ struct AppsView: View {
             isRealmFileExists = checkRealmFileExistence()
             
             selectedTab = 0
+            previousTab = 0
             
             isLoaded = false
             
@@ -181,7 +184,13 @@ struct AppsView: View {
     func receiveData() {
         if let receivedElements = dropboxManager.getFile(path: K.Paths.dataJSONPath, accessToken: accessToken) {
             
-            elements = receivedElements
+            elements.removeAll()
+            
+            for tempElement in receivedElements {
+                let element = Element(id: "", Name: tempElement.Name, Title: tempElement.Title, imageName: tempElement.imageName, description: tempElement.description, favorite: false)
+                
+                elements.append(element)
+            }
             
             let prePath = "/"
             
@@ -228,10 +237,12 @@ struct AppsView: View {
             
             var returnElements: [Element] = []
             for realmElement in realmElements {
-                let element = Element(Name: realmElement.name,
+                let element = Element(id: realmElement._id.stringValue,
+                                      Name: realmElement.name,
                                       Title: realmElement.title,
                                       imageName: realmElement.imageName,
-                                      description: realmElement.elementDescription)
+                                      description: realmElement.elementDescription,
+                                      favorite: realmElement.favorite)
                 returnElements.append(element)
             }
             
@@ -258,6 +269,8 @@ struct AppsView: View {
                     receiveData()
                     
                     saveElementsToRealm(elements)
+                    
+                    getElementsFromRealm()
                     
                     isRealmFileExists = true
                     

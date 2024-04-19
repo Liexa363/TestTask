@@ -73,9 +73,9 @@ struct DropboxManager {
         return returnAccessToken
     }
     
-    func getFile(path: String, accessToken: String) -> [Element]? {
+    func getFile(path: String, accessToken: String) -> [TempElement]? {
         
-        var returnElements: [Element]?
+        var returnElements: [TempElement]?
         
         let semaphore = DispatchSemaphore(value: 0)
         
@@ -107,7 +107,7 @@ struct DropboxManager {
                             return
                         }
                         
-                        let elements = dataArray.compactMap { Element(dictionary: $0) }
+                        let elements = dataArray.compactMap { TempElement(dictionary: $0) }
                         
                         returnElements = elements
                         
