@@ -21,7 +21,6 @@ struct AppsView: View {
     
     @Binding private var selectedElement: Element
     
-    
     @State private var isDetailViewActive = false
     
     private var dropboxManager = DropboxManager()
@@ -192,13 +191,6 @@ struct AppsView: View {
                 elements.append(element)
             }
             
-            let prePath = "/"
-            
-            for element in elements {
-                let path = element.imageName
-                
-                dropboxManager.getImage(path: prePath + path, accessToken: accessToken)
-            }
         } else {
             print("Failed to get file")
         }

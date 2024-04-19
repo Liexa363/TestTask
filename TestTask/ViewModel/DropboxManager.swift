@@ -129,37 +129,6 @@ struct DropboxManager {
         return returnElements
     }
     
-    
-    func downloadImageFromDropbox(path: String, accessToken: String, completion: @escaping ([MyImage]?, Error?) -> Void) {
-        let url = URL(string: "https://content.dropboxapi.com/2/files/download")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
-        request.setValue("{\"path\":\"\(path)\"}", forHTTPHeaderField: "Dropbox-API-Arg")
-        
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let response = response as? HTTPURLResponse else {
-                completion(nil, error ?? NSError(domain: "UnknownError", code: 0, userInfo: nil))
-                return
-            }
-            
-            if response.statusCode == 200 {
-                // Convert data to UIImage or NSImage
-                if let data = data, let image = UIImage(data: data) { // Or NSImage for macOS
-                    let images = [MyImage(image: image)] // Assuming you're only dealing with one image
-                    completion(images, nil)
-                } else {
-                    completion(nil, NSError(domain: "InvalidDataError", code: 2, userInfo: [NSLocalizedDescriptionKey: "Invalid data format"]))
-                }
-            } else {
-                completion(nil, NSError(domain: "HTTPError", code: response.statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP Status Code: \(response.statusCode)"]))
-            }
-        }
-        
-        task.resume()
-    }
-    
     func getImage(path: String, accessToken: String) {
         let semaphore = DispatchSemaphore(value: 0)
         
@@ -210,12 +179,59 @@ struct DropboxManager {
         
     }
     
+    func getImageFromDropbox(path: String, accessToken: String) -> MyImage? {
+        
+        var returnImage: MyImage?
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        
+        let fileName = String(path.dropFirst())
+        
+        let url = URL(string: "https://content.dropboxapi.com/2/files/download")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+        request.setValue("{\"path\":\"\(path)\"}", forHTTPHeaderField: "Dropbox-API-Arg")
+        
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            defer {
+                semaphore.signal()
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                print("UnknownError")
+                return
+            }
+            
+            if httpResponse.statusCode == 200 {
+                if let data = data, let image = UIImage(data: data) { // Or NSImage for macOS
+                    let image = MyImage(image: image) // Assuming you're only dealing with one image
+                    returnImage = image
+                } else {
+                    print("InvalidDataError")
+                }
+            } else {
+                if let data = data,
+                   let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+                   let errorSummary = json["error_summary"] as? String,
+                   errorSummary == "path/not_found/" {
+                    print("File not found")
+                } else {
+                    print("HTTPError: \(httpResponse.statusCode)")
+                }
+            }
+        }
+        
+        task.resume()
+        _ = semaphore.wait(timeout: .distantFuture)
+        return returnImage
+    }
+    
     private func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
     }
-
-
     
     
 }
